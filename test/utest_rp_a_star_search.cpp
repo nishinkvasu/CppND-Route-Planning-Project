@@ -63,13 +63,9 @@ class RoutePlannerTest : public ::testing::Test {
 
 // Test the CalculateHValue method.
 TEST_F(RoutePlannerTest, TestCalculateHValue) {
-    std::cout << "Test 0 \n";
     EXPECT_FLOAT_EQ(route_planner.CalculateHValue(start_node), 1.1329799);
-    std::cout << "Test 1 \n";
     EXPECT_FLOAT_EQ(route_planner.CalculateHValue(end_node), 0.0f);
-    std::cout << "Test 2 \n";
     EXPECT_FLOAT_EQ(route_planner.CalculateHValue(mid_node), 0.58903033);
-    std::cout << "Test 3 \n";
 }
 
 

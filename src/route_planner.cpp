@@ -10,7 +10,7 @@ RoutePlanner::RoutePlanner(RouteModel &model, float start_x, float start_y, floa
 
     // TODO 2: Use the m_Model.FindClosestNode method to find the closest nodes to the starting and ending coordinates.
     // Store the nodes you find in the RoutePlanner's start_node and end_node attributes.
-    // Below code will call copy constructor and hence will not work properly
+    // Below code will call copy constructor and hence will not work properly - Remove
     // RouteModel::Node startClosestNode = m_Model.FindClosestNode(start_x, start_y);
     // RouteModel::Node endClosestNode = m_Model.FindClosestNode(end_x, end_y);
     // std::cout<<endClosestNode.x << " " <<endClosestNode.y << " constructor \n";
@@ -25,16 +25,9 @@ RoutePlanner::RoutePlanner(RouteModel &model, float start_x, float start_y, floa
 // - Node objects have a distance method to determine the distance to another node.
 
 float RoutePlanner::CalculateHValue(RouteModel::Node const *node) {
-    float HValue;
-    std::cout<<node->x<<" x\n";
-    std::cout<<node->y<<" y\n";
-    std::cout<<RoutePlanner::end_node->x<<" x\n";
-    std::cout<<RoutePlanner::end_node->y<<" y\n";
+    float HValue = 0.0;
     if(this->end_node)
-        // HValue = this->end_node->distance(*node);
         HValue = node->distance(*(this->end_node));
-    else
-        HValue = node->distance(*node);
     return HValue;
 }
 
@@ -48,6 +41,17 @@ float RoutePlanner::CalculateHValue(RouteModel::Node const *node) {
 
 void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) {
     // current_node->FindNeighbors();
+    current_node->FindNeighbors();
+    for(auto it: current_node->neighbors)
+    {
+        it->parent = current_node;
+        it->h_value = CalculateHValue(it);
+        // g_value will be current nodes g value plus distance of current node to neighbor
+        it->g_value = current_node->g_value + it->distance(*current_node);
+        
+        open_list.emplace_back(it);
+        it->visited = true;
+    }
     // current_node->neighbors
 }
 
