@@ -44,13 +44,16 @@ void RoutePlanner::AddNeighbors(RouteModel::Node *current_node) {
     current_node->FindNeighbors();
     for(auto it: current_node->neighbors)
     {
-        it->parent = current_node;
-        it->h_value = CalculateHValue(it);
-        // g_value will be current nodes g value plus distance of current node to neighbor
-        it->g_value = current_node->g_value + it->distance(*current_node);
-        
-        open_list.emplace_back(it);
-        it->visited = true;
+        if(it->visited == false)
+        {
+            it->parent = current_node;
+            it->h_value = CalculateHValue(it);
+            // g_value will be current nodes g value plus distance of current node to neighbor
+            it->g_value = current_node->g_value + it->distance(*current_node);
+            
+            open_list.emplace_back(it);
+            it->visited = true;
+        }
     }
     // current_node->neighbors
 }
@@ -93,13 +96,24 @@ std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node 
     // Create path_found vector
     distance = 0.0f;
     std::vector<RouteModel::Node> path_found;
-
+        // add the vector to the path
+    // if(path_found.begin() == path_found.end())
+    // {
+    path_found.push_back(*current_node);
+    auto it = path_found.begin();
+    // } 
     // TODO: Implement your solution here.
     // iterate from current node to parent node - for parent node parent will be nullptr
     while(current_node->parent != nullptr)
     {
-        Node 
+        // cumulatively add the distances
+        distance += current_node->distance(*(current_node->parent));
+        // get the next node
+        current_node = current_node->parent;
+        // insert it into the path
+        it = path_found.insert(it, *current_node);       
     }
+    std::cout << "Reached here 1 \n";
 
     distance *= m_Model.MetricScale(); // Multiply the distance by the scale of the map to get meters.
     return path_found;
@@ -116,7 +130,30 @@ std::vector<RouteModel::Node> RoutePlanner::ConstructFinalPath(RouteModel::Node 
 
 void RoutePlanner::AStarSearch() {
     RouteModel::Node *current_node = nullptr;
-
+    auto i = 0;
+    
     // TODO: Implement your solution here.
+    current_node = start_node;
+    // open_list.push_back(start_node);
+    current_node->visited = true;
 
+    AddNeighbors(current_node); 
+    while(open_list.size() > 0)
+    {
+         
+        current_node = NextNode();
+        // std::cout<<current_node->g_value+current_node->h_value<<"\n";
+        if((current_node->x == end_node->x) && (current_node->y == end_node->y))
+        {
+            std::cout << "Reached here \n";
+            // goal has been reached
+            m_Model.path = ConstructFinalPath(current_node);
+            
+            break;
+        }
+        AddNeighbors(current_node); 
+        if(i++ == 50)
+             break;
+    }
+    std::cout << "Reached here 2\n";
 }
