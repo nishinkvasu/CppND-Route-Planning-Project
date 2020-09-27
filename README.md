@@ -1,3 +1,7 @@
+# Info
+
+This project is forked from Udacity and contains my work required to complete the tasks of the project as part of the Nanodegree.
+
 # Route Planning Project
 
 This repo contains the starter code for the Route Planning project.
